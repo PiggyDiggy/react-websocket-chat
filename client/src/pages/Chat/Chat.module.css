@@ -1,0 +1,31 @@
+.chat {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.chat::before {
+  content: "";
+  position: fixed;
+  inset: -100%;
+  transform: rotate(350deg) scale(0.7);
+  z-index: -1;
+  opacity: 0.15;
+  background: url("../../assets/pattern.png");
+}
+
+.chat::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  opacity: 0.7;
+  background: linear-gradient(to bottom left, #7044FF, #9EC1FF);
+}
+
+.leave-button {
+  position: absolute;
+  top: 0;
+}

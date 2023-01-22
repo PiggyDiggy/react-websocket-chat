@@ -1,10 +1,20 @@
-interface IMessage {
-  type: "info" | "msg";
+interface Message {
   content: string;
-  author: "server" | User;
   date?: string;
   id?: number;
 }
+
+interface IUserMessage extends Message {
+  type: "msg";
+  author: User;
+}
+
+interface IServerMessage extends Message {
+  type: "info";
+  author: "server";
+}
+
+type IMessage = IUserMessage | IServerMessage;
 
 type User = {
   name: string;
@@ -12,4 +22,4 @@ type User = {
   online: boolean;
 };
 
-export type { IMessage, User };
+export type { IMessage, IUserMessage, IServerMessage, User };

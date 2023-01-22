@@ -3,6 +3,7 @@ import { User, IMessage } from "../../types";
 import { SocketContext } from "../../App";
 import { MessagesList } from "../../components/MessagesList";
 import { MessageInput } from "../../components/MessageInput";
+import css from "./Chat.module.css";
 
 type Props = {
   user: User;
@@ -38,10 +39,10 @@ export const Chat: React.FC<Props> = ({ user, handleLogout }) => {
   }
 
   return (
-    <section>
-      <MessagesList messages={messages} user={user} />
+    <section className={css.chat}>
+      <MessagesList messages={messages}/>
       <MessageInput sendMessage={sendMessage} />
-      <button onClick={handleLogout}>Leave Chat</button>
+      <button className={css["leave-button"]} onClick={handleLogout}>Leave Chat</button>
     </section>
   );
 };
