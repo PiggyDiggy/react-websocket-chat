@@ -4,7 +4,7 @@
   flex-direction: column;
   align-items: center;
   margin: 0;
-  overflow: overlay;
+  overflow: auto;
   padding: 1em;
   gap: 0.5em;
 }
