@@ -1,0 +1,10 @@
+.textarea {
+  resize: none;
+  font: inherit;
+  overflow: overlay;
+  height: 26px;
+}
+
+.textarea::-webkit-scrollbar {
+  display: none;
+}
