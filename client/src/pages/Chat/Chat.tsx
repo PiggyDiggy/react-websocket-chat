@@ -40,7 +40,7 @@ export const Chat: React.FC<Props> = ({ user, handleLogout }) => {
 
   return (
     <section className={css.chat}>
-      <MessagesList messages={messages}/>
+      <MessagesList messages={messages} />
       <MessageInput sendMessage={sendMessage} />
       <button className={css["leave-button"]} onClick={handleLogout}>Leave Chat</button>
     </section>

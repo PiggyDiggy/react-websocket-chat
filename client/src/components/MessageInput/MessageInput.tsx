@@ -10,9 +10,9 @@ export const MessageInput: React.FC<Props> = ({ sendMessage }) => {
   const [message, setMessage] = useState("");
 
   function sumbitMessage() {
-    if (!message) return;
+    if (!message.trim()) return;
 
-    sendMessage(message);
+    sendMessage(message.trim());
     setMessage("");
   }
 
