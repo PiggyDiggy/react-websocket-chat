@@ -1,0 +1,45 @@
+.header {
+  display: flex;
+  align-items: center;
+  background-color: white;
+  padding: 8px;
+  z-index: 10;
+  position: relative;
+}
+
+.header__buttons {
+  display: flex;
+  justify-content: space-between;
+  flex-grow: 1;
+}
+
+.header__button {
+  display: flex;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  background-color: transparent;
+}
+
+.header__icon {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: #575757;
+  stroke-width: 1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: stroke 0.1s ease-out;
+}
+
+.header__button:hover .header__icon {
+  stroke: gray;
+}
+
+.logout-icon__arrow {
+  transition: transform 0.1s ease-out;
+}
+
+.logout-button:hover .logout-icon__arrow {
+  transform: translateX(2px);
+}

@@ -1,0 +1,39 @@
+.wrapper {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5em;
+}
+
+.user__avatar {
+  position: relative;
+}
+
+.user--online .user__avatar::before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  right: 0;
+  background-color: #53e546;
+  border: 2px solid white;
+  border-radius: 100%;
+  width: 10px;
+  height: 10px;
+}
+
+.user__info {
+  display: flex;
+  flex-direction: column;
+}
+
+.user__name {
+  word-break: break-word;
+}
+
+.user__status {
+  color: #aaa;
+  font-size: 14px;
+}
+
+.user--online .user__status {
+  color: #555;
+}

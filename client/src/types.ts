@@ -22,4 +22,6 @@ type User = {
   online: boolean;
 };
 
-export type { IMessage, IUserMessage, IServerMessage, User };
+type ServerData = { messages: IMessage[]; users: Record<string, User> };
+
+export type { IMessage, IUserMessage, IServerMessage, User, ServerData };

@@ -1,9 +1,11 @@
 .chat {
   position: relative;
-  height: 100%;
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+  overflow: auto;
+  z-index: 5;
 }
 
 .chat::before {

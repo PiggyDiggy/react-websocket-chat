@@ -1,7 +1,7 @@
 import * as express from "express";
 import { createServer } from "http";
 import { Server, Socket } from "socket.io";
-import { Message, User } from "./types";
+import { Message, User, Data } from "./types";
 
 const app = express();
 
@@ -19,19 +19,21 @@ const messages: Array<Message> = [];
 const users: Record<string, User> = {};
 
 io.on("connection", (socket) => {
-  socket.on("user-connect", (user, cb) => onUserConnect(user, cb));
+  socket.on("user-connect", (user, cb) => onUserConnect(socket, user, cb));
   socket.on("disconnect", () => onUserDisconnect(socket));
   socket.on("user-disconnect", () => onUserDisconnect(socket));
   socket.on("message", (message) => addMessage(message));
 });
 
 function onUserConnect(
+  socket: Socket,
   user: User,
-  callback: (messages: Array<Message>) => void
-) {
+  callback: (data: Data) => void
+) {  
   users[user.id] = user;
   sendInfoMessage(`User ${user.name} joined the chat`);
-  callback(messages);
+  callback({ messages, users });
+  socket.broadcast.emit("user-connect", users);
 }
 
 function onUserDisconnect(socket: Socket) {
@@ -39,6 +41,7 @@ function onUserDisconnect(socket: Socket) {
   if (!user) return;
   user.online = false;
   sendInfoMessage(`User ${user.name} left the chat`);
+  socket.broadcast.emit("user-disconnect", users);
 }
 
 function sendInfoMessage(content: string) {

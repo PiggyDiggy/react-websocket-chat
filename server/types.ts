@@ -10,6 +10,8 @@ type User = {
   name: string;
   id: string;
   online: boolean;
-}
+};
 
-export type { Message, User };
+type Data = { messages: Message[]; users: Record<string, User> };
+
+export type { Message, User, Data };
