@@ -1,36 +1,70 @@
 .message-wrapper {
   display: flex;
-  gap: 0.5em;
-  align-items: flex-end;
-  align-self: flex-start;
-  word-break: break-word;
-  max-width: 60%;
+  width: 100%;
+  --avatar-width: calc(40px + 0.5em);
+  --border-radius-main: 15px;
+  --border-radius-small: 7px;
+  --box-shadow-main: 2px 2px 5px -2px rgba(0, 0, 0, 0.1), 2px 2px 7px rgba(0, 0, 0, 0.05);
+  --box-shadow-reverse: -2px 2px 5px -2px rgba(0, 0, 0, 0.1), -2px 2px 7px rgba(0, 0, 0, 0.05);
 }
 
-.message--self {
-  align-self: flex-end;
-  flex-direction: row-reverse;
+.self {
+  justify-content: flex-end;
+}
+
+.first-in-group {
+  margin-top: 0.25em;
 }
 
 .message {
+  display: flex;
+  gap: 0.5em;
+  align-items: flex-end;
+  max-width: 60%;
+}
+
+.self .message {
+  flex-direction: row-reverse;
+}
+
+.message__content {
+  word-break: break-word;
   color: #373737;
   background-color: white;
   padding: 8px 12px 8px 16px;
-  border-radius: 15px;
-  border-bottom-left-radius: 0px;
+  border-radius: var(--border-radius-small) var(--border-radius-main) var(--border-radius-main) var(--border-radius-small);
   position: relative;
-  box-shadow: 2px 2px 5px -2px rgba(0, 0, 0, 0.1), 2px 2px 7px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--box-shadow-main);
+  margin: 0 0 0 var(--avatar-width);
 }
 
-.message--self .message {
+.self .message__content {
   text-align: right;
   padding: 8px 16px 8px 12px;
-  border-radius: 15px;
-  border-bottom-right-radius: 0px;
-  box-shadow: -2px 2px 5px -2px rgba(0, 0, 0, 0.1), -2px 2px 7px rgba(0, 0, 0, 0.05);
+  border-radius: var(--border-radius-main) var(--border-radius-small) var(--border-radius-small) var(--border-radius-main);
+  box-shadow: var(--box-shadow-reverse);
+  margin: 0 var(--avatar-width) 0 0;
 }
 
-.message::before {
+.first-in-group .message__content {
+  border-top-left-radius: 15px;
+}
+
+.last-in-group .message__content {
+  margin: 0;
+  border-bottom-left-radius: 0;
+}
+
+.self.first-in-group .message__content {
+  border-top-right-radius: var(--border-radius-main);
+}
+
+.self.last-in-group .message__content {
+  border-bottom-left-radius: var(--border-radius-main);
+  border-bottom-right-radius: 0;
+}
+
+.last-in-group .message__content::before {
   content: "";
   position: absolute;
   bottom: 0;
@@ -38,11 +72,11 @@
   width: 10px;
   height: 10px;
   background: radial-gradient(circle at 0 0, transparent 69%, white 72%);
-  box-shadow: 2px 2px 5px -2px rgb(0 0 0 / 10%), 2px 2px 7px rgb(0 0 0 / 5%);
+  box-shadow: var(--box-shadow-main);
   z-index: -1;
 }
 
-.message--self .message::before {
+.self .message__content::before {
   left: unset;
   right: -10px;
   transform: scaleX(-1);
@@ -54,7 +88,7 @@
   gap: 1em;
 }
 
-.message--self .message__info {
+.self .message__info {
   flex-direction: row-reverse;
 }
 

@@ -6,7 +6,7 @@
   margin: 0;
   overflow: overlay;
   padding: 1em;
-  gap: 0.5em;
+  gap: 0.25em;
   color: rgba(0, 0, 0, 0);
   transition: color 0.2s ease;
 }

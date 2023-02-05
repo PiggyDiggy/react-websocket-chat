@@ -5,6 +5,7 @@
   padding: 8px;
   z-index: 10;
   position: relative;
+  box-shadow: 0px 2px 7px rgb(0 0 0 / 10%);
 }
 
 .header__buttons {
@@ -19,21 +20,22 @@
   cursor: pointer;
   outline: none;
   background-color: transparent;
+  color: #323232;
+  transition: color 0.1s ease-out;
 }
 
 .header__icon {
   width: 24px;
   height: 24px;
   fill: none;
-  stroke: #575757;
+  stroke: currentColor;
   stroke-width: 1;
   stroke-linecap: round;
   stroke-linejoin: round;
-  transition: stroke 0.1s ease-out;
 }
 
-.header__button:hover .header__icon {
-  stroke: gray;
+.header__button:hover {
+  color: #575757;
 }
 
 .logout-icon__arrow {

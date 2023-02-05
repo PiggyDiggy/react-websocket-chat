@@ -5,9 +5,14 @@ import css from "./Header.module.css";
 type Props = {
   logout: () => void;
   openSidebar: () => void;
+  usersCount: number;
 };
 
-export const Header: React.FC<Props> = ({ logout, openSidebar }) => {
+export const Header: React.FC<Props> = ({
+  logout,
+  openSidebar,
+  usersCount,
+}) => {
   return (
     <header className={css.header}>
       <div className={css.header__buttons}>
@@ -26,6 +31,7 @@ export const Header: React.FC<Props> = ({ logout, openSidebar }) => {
             <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
             <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
           </svg>
+          <div className={css["users-count"]}>{usersCount}</div>
         </button>
         <button
           className={cx(css.header__button, css["logout-button"])}

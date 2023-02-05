@@ -45,11 +45,18 @@ export const Chat: React.FC<Props> = ({ user, handleLogout }) => {
     socket.emit("message", msg);
   }
 
+  function getOnlineUsersCount() {
+    return Object.values(users).reduce((count, user) => {
+      return user.online ? count + 1 : count;
+    }, 0);
+  }
+
   return (
     <>
       <Header
         logout={handleLogout}
         openSidebar={() => setSidebarOpened(true)}
+        usersCount={getOnlineUsersCount()}
       />
       <main className={css.chat}>
         <MessagesList messages={messages} />

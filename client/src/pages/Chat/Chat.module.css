@@ -12,10 +12,11 @@
   content: "";
   position: fixed;
   inset: -100%;
-  transform: rotate(350deg) scale(0.6);
+  transform: rotate(350deg);
   z-index: -1;
   opacity: 0.15;
-  background: url("../../assets/pattern.png");
+  background-image: url("../../assets/pattern.png");
+  background-size: 190px auto;
 }
 
 .chat::after {

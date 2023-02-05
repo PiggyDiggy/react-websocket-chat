@@ -12,7 +12,7 @@ export const UserList: React.FC<Props> = ({ users }) => {
     return users.slice().sort((a, b) => {
       if (a.online && !b.online) return -1;
       if (!a.online && b.online) return 1;
-      return 0;
+      return a.name.localeCompare(b.name);
     });
   }
 

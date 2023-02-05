@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from "react";
-import { IMessage } from "../../types";
+import { IMessage, User } from "../../types";
 import { ServerMessage } from "../ServerMessage";
 import { UserMessage } from "../UserMessage";
 import css from "./MessagesList.module.css";
@@ -29,13 +29,39 @@ export const MessagesList: React.FC<Props> = ({ messages }) => {
     list.scrollTo({ top: list.scrollHeight, behavior: "smooth" });
   }, [messages]);
 
+  function hasCommonAuthor(msg1: IMessage, msg2: IMessage) {
+    return (msg1.author as User).id === (msg2.author as User).id;
+  }
+
+  function fromCommonGroup(msg1: IMessage, msg2: IMessage) {
+    return (
+      hasCommonAuthor(msg1, msg2) &&
+      Math.abs(Date.parse(msg1.date!) - Date.parse(msg2.date!)) / 1000 < 120
+    );
+  }
+
+  function getPos(msg: IMessage, index: number) {
+    let pos: "last" | "first" | "single" | "mid" = "mid";
+    if (
+      index === messages.length - 1 ||
+      !fromCommonGroup(msg, messages[index + 1])
+    ) {
+      pos = "last";
+    }
+    if (index === 0 || !fromCommonGroup(msg, messages[index - 1])) {
+      if (pos === "last") return "single";
+      pos = "first";
+    }
+    return pos;
+  }
+
   return (
     <ul className={css["messages-list"]} ref={listRef}>
-      {messages.map((msg) =>
+      {messages.map((msg, index) =>
         msg.author === "server" ? (
           <ServerMessage message={msg} key={msg.id} />
         ) : (
-          <UserMessage message={msg} key={msg.id} />
+          <UserMessage pos={getPos(msg, index)} message={msg} key={msg.id} />
         )
       )}
     </ul>
