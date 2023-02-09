@@ -16,5 +16,5 @@ export const formatDate = ({ date, format }: Args) => {
           minute: "numeric",
           hour12: false,
         };
-  return new Date(date).toLocaleString("en-US", options);
+  return new Date(date).toLocaleString("en-GB", options);
 };

@@ -8,6 +8,8 @@ type Props = {
   messages: IMessage[];
 };
 
+const UserMsg = React.memo(UserMessage);
+
 export const MessagesList: React.FC<Props> = ({ messages }) => {
   const listRef = useRef<HTMLUListElement>(null);
 
@@ -41,18 +43,9 @@ export const MessagesList: React.FC<Props> = ({ messages }) => {
   }
 
   function getPos(msg: IMessage, index: number) {
-    let pos: "last" | "first" | "single" | "mid" = "mid";
-    if (
-      index === messages.length - 1 ||
-      !fromCommonGroup(msg, messages[index + 1])
-    ) {
-      pos = "last";
-    }
-    if (index === 0 || !fromCommonGroup(msg, messages[index - 1])) {
-      if (pos === "last") return "single";
-      pos = "first";
-    }
-    return pos;
+    return index === 0 || !fromCommonGroup(msg, messages[index - 1])
+      ? "first"
+      : "mid";
   }
 
   return (
@@ -61,7 +54,7 @@ export const MessagesList: React.FC<Props> = ({ messages }) => {
         msg.author === "server" ? (
           <ServerMessage message={msg} key={msg.id} />
         ) : (
-          <UserMessage pos={getPos(msg, index)} message={msg} key={msg.id} />
+          <UserMsg pos={getPos(msg, index)} message={msg} key={msg.id} />
         )
       )}
     </ul>

@@ -7,39 +7,59 @@ import css from "./UserMessage.module.css";
 
 type Props = {
   message: IUserMessage;
-  pos: "first" | "last" | "mid" | "single";
+  pos: "first" | "mid";
 };
 
 export const UserMessage: React.FC<Props> = ({ message, pos }) => {
   const socket = useContext(SocketContext);
 
   return (
-    <li
-      className={cx(css["message-wrapper"], {
-        [css["self"]]: message.author.id === socket?.id,
-        [css["last-in-group"]]: pos === "last" || pos === "single",
-        [css["first-in-group"]]: pos === "first" || pos === "single",
-      })}
-    >
-      <div className={css.message}>
-        {pos === "last" || pos === "single" ? (
-          <Avatar name={message.author.name} />
-        ) : null}
-        <div className={css.message__content}>
-          <div className={css.message__info}>
-            <div className={css["message__author-name"]}>
-              {message.author.name}
-            </div>
-            <div
-              title={formatDate({ date: message.date!, format: "long" })}
-              className={css.message__date}
-            >
-              {formatDate({ date: message.date!, format: "short" })}
+    <>
+      {pos === "first" ? (
+        <li
+          className={cx(css["message-wrapper"], css["first-in-group"], {
+            [css["self"]]: message.author.id === socket?.id,
+          })}
+        >
+          <div className={css.message}>
+            <Avatar name={message.author.name} />
+            <div className={css.message__content}>
+              <div className={css.message__info}>
+                <div className={css["message__author-name"]}>
+                  {message.author.name}
+                </div>
+                <div
+                  title={formatDate({ date: message.date!, format: "long" })}
+                  className={css.message__date}
+                >
+                  {formatDate({ date: message.date!, format: "short" })}
+                </div>
+              </div>
+              <div>{message.content}</div>
             </div>
           </div>
-          <div>{message.content}</div>
-        </div>
-      </div>
-    </li>
+        </li>
+      ) : (
+        <li
+          className={cx(css["message-wrapper"], {
+            [css["self"]]: message.author.id === socket?.id,
+          })}
+        >
+          <div className={css.message}>
+            <div className={css.message__content}>
+              <div>{message.content}</div>
+              <div className={css.message__info}>
+                <div
+                  title={formatDate({ date: message.date!, format: "long" })}
+                  className={css.message__date}
+                >
+                  {formatDate({ date: message.date!, format: "short" })}
+                </div>
+              </div>
+            </div>
+          </div>
+        </li>
+      )}
+    </>
   );
 };
