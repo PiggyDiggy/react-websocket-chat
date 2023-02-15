@@ -1,0 +1,21 @@
+.reply {
+  padding-left: 0.5em;
+  border-left: 3px solid #cb92ff;
+  line-height: 1.125rem;
+  font-size: 0.875rem;
+  overflow: hidden;
+}
+
+.reply__message {
+  color: #373737;
+}
+
+.message__author {
+  font-weight: 600;
+}
+
+.message__content {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}

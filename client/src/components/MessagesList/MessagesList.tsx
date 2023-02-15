@@ -1,16 +1,17 @@
 import React, { useRef, useEffect } from "react";
-import { IMessage, User } from "../../types";
+import { IMessage, IUserMessage, User } from "../../types";
 import { ServerMessage } from "../ServerMessage";
 import { UserMessage } from "../UserMessage";
 import css from "./MessagesList.module.css";
 
 type Props = {
   messages: IMessage[];
+  setReply: (msg: IUserMessage) => void;
 };
 
 const UserMsg = React.memo(UserMessage);
 
-export const MessagesList: React.FC<Props> = ({ messages }) => {
+export const MessagesList: React.FC<Props> = ({ messages, setReply }) => {
   const listRef = useRef<HTMLUListElement>(null);
 
   useEffect(() => {
@@ -54,7 +55,12 @@ export const MessagesList: React.FC<Props> = ({ messages }) => {
         msg.author === "server" ? (
           <ServerMessage message={msg} key={msg.id} />
         ) : (
-          <UserMsg pos={getPos(msg, index)} message={msg} key={msg.id} />
+          <UserMsg
+            pos={getPos(msg, index)}
+            message={msg}
+            setReply={setReply}
+            key={msg.id}
+          />
         )
       )}
     </ul>

@@ -27,7 +27,7 @@
   background-color: white;
   display: flex;
   align-items: center;
-  padding-block: 0;
+  padding: 0 10px;
   cursor: pointer;
 }
 

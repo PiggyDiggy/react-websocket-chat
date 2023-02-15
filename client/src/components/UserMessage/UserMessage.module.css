@@ -2,8 +2,8 @@
   display: flex;
   width: 100%;
   --avatar-width: calc(40px + 0.5em);
-  --border-radius-main: 20px;
-  --border-radius-small: 7px;
+  --border-radius-main: 14px;
+  --border-radius-small: 5px;
   --box-shadow-main: 2px 2px 5px -2px rgba(0, 0, 0, 0.1), 2px 2px 7px rgba(0, 0, 0, 0.05);
   --box-shadow-reverse: -2px 2px 5px -2px rgba(0, 0, 0, 0.1), -2px 2px 7px rgba(0, 0, 0, 0.05);
 }
@@ -27,9 +27,11 @@
   flex-direction: row-reverse;
 }
 
-.message__content {
-  word-break: break-word;
-  color: #373737;
+.message__container {
+  display: flex;
+  flex-direction: column;
+  row-gap: 4px;
+  width: 100%;
   background-color: white;
   padding: 8px 16px;
   border-radius: var(--border-radius-small) var(--border-radius-main) var(--border-radius-main) var(--border-radius-small);
@@ -37,19 +39,20 @@
   box-shadow: var(--box-shadow-main);
 }
 
-.message-wrapper:not(.first-in-group) .message__content {
-  display: flex;
-  align-items: flex-end;
-  column-gap: 1em;
-  flex-wrap: wrap;
+.message-wrapper:not(.first-in-group) .message__container {
   margin: 0 0 0 var(--avatar-width);
 }
 
-.first-in-group .message__content {
+.message__content {
+  word-break: break-word;
+  color: #373737;
+}
+
+.first-in-group .message__container {
   border-top-left-radius: 0;
 }
 
-.first-in-group .message__content::before {
+.first-in-group .message__container::before {
   content: "";
   position: absolute;
   top: 0;
@@ -61,44 +64,25 @@
   z-index: -1;
 }
 
-.self .message__content {
-  text-align: right;
+.self .message__container {
   border-radius: var(--border-radius-main) var(--border-radius-small) var(--border-radius-small) var(--border-radius-main);
   box-shadow: var(--box-shadow-reverse);
 }
 
-.message-wrapper.self:not(.first-in-group) .message__content {
+.message-wrapper.self:not(.first-in-group) .message__container {
   margin: 0 var(--avatar-width) 0 0;
 }
 
-.self.first-in-group .message__content {
+.self.first-in-group .message__container {
   border-top-right-radius: 0;
 }
 
-.self .message__content::before {
+.self .message__container::before {
   left: unset;
   right: -9px;
   transform: scale(-1);
 }
 
-.message__info {
-  display: flex;
-  justify-content: space-between;
-  gap: 1em;
-  margin-left: auto;
-}
-
-.self .message__info {
-  flex-direction: row-reverse;
-}
-
-.message__author-name {
-  font-weight: 600;
-  flex-shrink: 0;
-}
-
-.message__date {
-  font-size: 14px;
-  color: gray;
-  user-select: none;
+.message__reply {
+  margin-block: 4px;
 }

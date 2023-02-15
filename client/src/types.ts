@@ -7,6 +7,7 @@ interface Message {
 interface IUserMessage extends Message {
   type: "msg";
   author: User;
+  reply?: IUserMessage;
 }
 
 interface IServerMessage extends Message {

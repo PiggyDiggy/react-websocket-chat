@@ -1,0 +1,36 @@
+.reply-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  z-index: 15;
+  background-color: white;
+  box-shadow: 0px -2px 7px rgb(0 0 0 / 10%);
+  padding: 10px 18px 10px 24px;
+}
+
+.reply {
+  font-size: 1rem;
+  line-height: normal;
+  padding-right: 18px;
+}
+
+.reply__cross {
+  height: 15px;
+  border: none;
+  background-color: white;
+  padding: 0;
+  cursor: pointer;
+}
+
+.reply__cross svg {
+  stroke: #575757;
+  stroke-width: 10px;
+  stroke-linecap: round;
+  height: 100%;
+  transition: stroke 0.2s ease-out;
+}
+
+.reply__cross:hover svg {
+  stroke: gray;
+}

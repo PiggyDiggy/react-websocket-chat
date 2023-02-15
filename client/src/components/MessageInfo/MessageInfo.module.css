@@ -1,0 +1,27 @@
+.message__info {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75em;
+  margin-left: auto;
+}
+
+.message__author-name {
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.message__date {
+  font-size: 14px;
+  color: gray;
+  user-select: none;
+  word-break: keep-all;
+}
+
+.message__date.date-only {
+  display: inline;
+  float: right;
+  position: relative;
+  top: 4px;
+  height: 22px;
+  margin-left: 0.75em;
+}
