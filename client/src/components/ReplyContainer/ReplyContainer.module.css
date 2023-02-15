@@ -1,24 +1,41 @@
+.scalable-container {
+  overflow: hidden;
+}
+
+.reply-enter {
+  height: 0;
+}
+
+.reply-enter-active {
+  transition: height 0.2s ease;
+  height: 4em;
+}
+
+.reply-exit {
+  height: 4em;
+}
+
+.reply-exit-active {
+  transition: height 0.2s ease;
+  height: 0;
+}
+
 .reply-wrapper {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  position: relative;
-  z-index: 15;
-  background-color: white;
-  box-shadow: 0px -2px 7px rgb(0 0 0 / 10%);
-  padding: 10px 18px 10px 24px;
+  gap: 1.125em;
+  padding: 0.625em 1.125em 0.625em 1.5em;
 }
 
 .reply {
   font-size: 1rem;
   line-height: normal;
-  padding-right: 18px;
 }
 
 .reply__cross {
   height: 15px;
   border: none;
-  background-color: white;
   padding: 0;
   cursor: pointer;
 }

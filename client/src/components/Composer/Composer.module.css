@@ -1,0 +1,6 @@
+.composer {
+  box-shadow: 0px -2px 7px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 10;
+  background-color: white;
+}

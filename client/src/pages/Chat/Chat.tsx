@@ -2,8 +2,7 @@ import React, { useEffect, useContext, useState } from "react";
 import { User, IMessage, ServerData, IUserMessage } from "../../types";
 import { SocketContext } from "../../App";
 import { MessagesList } from "../../components/MessagesList";
-import { MessageInput } from "../../components/MessageInput";
-import { ReplyContainer } from "../../components/ReplyContainer";
+import { Composer } from "../../components/Composer";
 import { Sidebar } from "../../components/Sidebar";
 import { Header } from "../../components/Header";
 import css from "./Chat.module.css";
@@ -13,7 +12,9 @@ type Props = {
   handleLogout: () => void;
 };
 
-export const Chat: React.FC<Props> = ({ user, handleLogout }) => {
+const ComposerMemo = React.memo(Composer);
+
+export const Chat: React.FC<Props> = ({ user, handleLogout }) => {  
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [users, setUsers] = useState<ServerData["users"]>({});
   const [sidebarOpened, setSidebarOpened] = useState(false);
@@ -36,23 +37,6 @@ export const Chat: React.FC<Props> = ({ user, handleLogout }) => {
     };
   }, [socket, user]);
 
-  function sendMessage(content: string) {
-    if (!socket) return;
-
-    const msg: IMessage = {
-      type: "msg",
-      author: user,
-      content,
-    };
-
-    if (reply) {
-      msg.reply = reply;
-    }
-
-    socket.emit("message", msg);
-    setReply(null);
-  }
-
   function getOnlineUsersCount() {
     return Object.values(users).reduce((count, user) => {
       return user.online ? count + 1 : count;
@@ -68,8 +52,7 @@ export const Chat: React.FC<Props> = ({ user, handleLogout }) => {
       />
       <main className={css.chat}>
         <MessagesList setReply={setReply} messages={messages} />
-        {reply && <ReplyContainer message={reply} setReply={setReply} />}
-        <MessageInput sendMessage={sendMessage} />
+        <ComposerMemo reply={reply} setReply={setReply} user={user} />
       </main>
       <Sidebar
         users={Object.values(users)}
