@@ -23,6 +23,6 @@ type User = {
   online: boolean;
 };
 
-type ServerData = { messages: IMessage[]; users: Record<string, User> };
+type ServerData = { messages: IMessage[]; users: User[] };
 
 export type { IMessage, IUserMessage, IServerMessage, User, ServerData };

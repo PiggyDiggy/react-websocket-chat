@@ -8,23 +8,22 @@ import { Header } from "../../components/Header";
 import css from "./Chat.module.css";
 
 type Props = {
-  user: User;
   handleLogout: () => void;
 };
 
 const ComposerMemo = React.memo(Composer);
 
-export const Chat: React.FC<Props> = ({ user, handleLogout }) => {  
+export const Chat: React.FC<Props> = ({ handleLogout }) => {
   const [messages, setMessages] = useState<IMessage[]>([]);
-  const [users, setUsers] = useState<ServerData["users"]>({});
+  const [users, setUsers] = useState<User[]>([]);
   const [sidebarOpened, setSidebarOpened] = useState(false);
   const [reply, setReply] = useState<IUserMessage | null>(null);
-  const socket = useContext(SocketContext);
+  const socket = useContext(SocketContext);  
 
   useEffect(() => {
     if (!socket) return;
 
-    socket.emit("user-connect", user, (data: ServerData) => {
+    socket.emit("user-connect", (data: ServerData) => {
       setMessages(data.messages);
       setUsers(data.users);
     });
@@ -35,12 +34,10 @@ export const Chat: React.FC<Props> = ({ user, handleLogout }) => {
     return () => {
       socket.removeAllListeners();
     };
-  }, [socket, user]);
+  }, [socket]);
 
   function getOnlineUsersCount() {
-    return Object.values(users).reduce((count, user) => {
-      return user.online ? count + 1 : count;
-    }, 0);
+    return users.filter((user) => user.online).length;
   }
 
   return (
@@ -52,10 +49,10 @@ export const Chat: React.FC<Props> = ({ user, handleLogout }) => {
       />
       <main className={css.chat}>
         <MessagesList setReply={setReply} messages={messages} />
-        <ComposerMemo reply={reply} setReply={setReply} user={user} />
+        <ComposerMemo reply={reply} setReply={setReply} />
       </main>
       <Sidebar
-        users={Object.values(users)}
+        users={users}
         opened={sidebarOpened}
         closeSidebar={() => setSidebarOpened(false)}
       />

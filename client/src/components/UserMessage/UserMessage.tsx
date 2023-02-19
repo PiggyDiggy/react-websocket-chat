@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
-import { IUserMessage } from "../../types";
-import { SocketContext } from "../../App";
+import { IUserMessage, User } from "../../types";
+import { UserContext } from "../../App";
 import { Avatar } from "../Avatar";
 import { ReplyPreview } from "../ReplyPreview";
 import { MessageInfo } from "../MessageInfo";
@@ -14,8 +14,8 @@ type Props = {
 };
 
 export const UserMessage: React.FC<Props> = ({ message, pos, setReply }) => {
-  const socket = useContext(SocketContext);
-  const isOwn = message.author.id === socket?.id;
+  const user = useContext(UserContext) as User;
+  const isOwn = message.author.id === user.id;
 
   if (pos === "first") {
     return (

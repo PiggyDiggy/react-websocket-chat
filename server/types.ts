@@ -1,18 +1,18 @@
-type Message = {
+interface Message {
   type: "info" | "msg";
   content: string;
   author: "server" | User;
   reply?: Message;
   date?: string;
   id?: number;
-};
+}
 
-type User = {
+interface User {
   name: string;
   id: string;
   online: boolean;
-};
+}
 
-type Data = { messages: Message[]; users: Record<string, User> };
+type Data = { messages: Message[]; users: User[] };
 
 export type { Message, User, Data };

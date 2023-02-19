@@ -1,21 +1,21 @@
 import React, { useContext } from "react";
 import { MessageInput } from "../../components/MessageInput";
 import { ReplyContainer } from "../../components/ReplyContainer";
-import { IMessage, IUserMessage, User } from "../../types";
-import { SocketContext } from "../../App";
+import { IMessage, IUserMessage } from "../../types";
+import { SocketContext, UserContext } from "../../App";
 import css from "./Composer.module.css";
 
 type Props = {
-  user: User;
   reply: IUserMessage | null;
   setReply: (msg: IUserMessage | null) => void;
 };
 
-export const Composer: React.FC<Props> = ({ user, reply, setReply }) => {  
+export const Composer: React.FC<Props> = ({ reply, setReply }) => {  
   const socket = useContext(SocketContext);
+  const user = useContext(UserContext);
 
   function sendMessage(content: string) {
-    if (!socket) return;
+    if (!socket || !user) return;
 
     const msg: IMessage = {
       type: "msg",
