@@ -4,18 +4,26 @@ import { randomUUID } from "crypto";
 import { Server, Socket } from "socket.io";
 import { UserStore } from "./userStore";
 import { Message, User, Data } from "./types";
+import path = require("path");
 
 const app = express();
+const buildPath = path.resolve(__dirname + "/../client/build");
+
+app.use(express.static(buildPath));
 
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: "*",
   },
 });
 
 const PORT = process.env.PORT || 8080;
 httpServer.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+
+app.get("*", (_, res) => {
+  res.sendFile(buildPath + "/index.html");
+});
 
 const messages: Array<Message> = [];
 const users = new UserStore();
