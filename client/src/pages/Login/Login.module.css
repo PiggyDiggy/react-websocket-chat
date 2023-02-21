@@ -1,0 +1,98 @@
+.wrapper {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.title {
+  margin-top: 0;
+  background-image: linear-gradient(to right, #7044FF, #2764FF);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-size: 2em;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1em;
+}
+
+.input-wrapper {
+  position: relative;
+}
+
+.input__label {
+  position: absolute;
+  pointer-events: none;
+  top: 50%;
+  left: 50%;
+  color: gray;
+  transform: translate(-50%, -50%);
+  transition: transform 0.2s ease, inset 0.2s ease, font-size 0.2s ease;
+}
+
+.input-wrapper:focus-within .input__label,
+.input:valid + .input__label {
+  transform: translate(0, -110%);
+  top: 0;
+  left: 0;
+  font-size: 14px;
+}
+
+.input {
+  height: 60px;
+  border: 1px solid #2764FF;
+  border-radius: 7px;
+  font: inherit;
+  padding: 0.5em;
+  text-align: center;
+  min-width: 200px;
+  width: 200px;
+  transition: box-shadow 0.2s ease;
+}
+
+.input:focus {
+  outline: none;
+  box-shadow: 0 0 0 1px #2764FF;
+}
+
+.button {
+  display: flex;
+  align-items: center;
+  border: none;
+  background-color: #7044FF;
+  border-radius: 7px;
+  gap: 0.5em;
+  padding: 0.5em 1em;
+  font: inherit;
+  cursor: pointer;
+  color: white;
+  transition: background-color 0.1s ease-out;
+}
+
+.button:hover {
+  background-color: #815AFF;
+}
+
+.button__login-icon {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: white;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.icon__arrow {
+  transition: transform 0.1s ease;
+}
+
+.button:hover .button__login-icon .icon__arrow {
+  transform: translateX(1px);
+}
