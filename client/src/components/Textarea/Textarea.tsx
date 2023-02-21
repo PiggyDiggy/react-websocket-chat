@@ -37,6 +37,29 @@ export const Textarea: React.FC<Props> = ({
   useEffect(() => {
     const textarea = textareaRef.current as TextArea;
 
+    function focusTextarea() {
+      textarea.focus();
+    }
+
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.ctrlKey || e.metaKey) return;
+      focusTextarea();
+    }
+
+    focusTextarea();
+
+    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("paste", focusTextarea);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("paste", focusTextarea);
+    };
+  }, []);
+
+  useEffect(() => {
+    const textarea = textareaRef.current as TextArea;
+
     function resize(target: TextArea) {
       const borderWidth = Number(
         getComputedStyle(target).borderWidth.slice(0, -2)
