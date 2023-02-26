@@ -50,6 +50,7 @@ io.use((socket: Socket, next) => {
     online: false,
   };
   users.saveUser(socket.handshake.auth.sessionId, user);
+  sendInfoMessage(`User ${user.name} joined the chat`);
   next();
 });
 
@@ -70,7 +71,6 @@ io.on("connection", (socket) => {
 function onUserConnect(socket: Socket, callback: (data: Data) => void) {
   const user = users.findUser(socket.handshake.auth.sessionId);
   if (!user.online) {
-    sendInfoMessage(`User ${user.name} joined the chat`);
     user.online = true;
     socket.broadcast.emit("user-connect", users.findAllUsers());
   }
@@ -80,6 +80,8 @@ function onUserConnect(socket: Socket, callback: (data: Data) => void) {
 async function onUserDisconnect(sessionId: string) {
   const matchingSockets = await getSessionSockets(sessionId);
   matchingSockets.forEach((socket) => socket.disconnect());
+  const user = users.findUser(sessionId);
+  sendInfoMessage(`User ${user.name} left the chat`);
 }
 
 async function onDisconnect(socket: Socket, sessionId: string) {
@@ -88,7 +90,6 @@ async function onDisconnect(socket: Socket, sessionId: string) {
     const user = users.findUser(sessionId);
     user.online = false;
     users.removeTypingUser(user);
-    sendInfoMessage(`User ${user.name} left the chat`);
     socket.broadcast.emit("user-disconnect", users.findAllUsers());
   }
 }
@@ -108,7 +109,7 @@ function onUserActivity(socket: Socket, activity: string) {
     users.addTypingUser(user);
   }
 
-  io.emit("user-activity", users.getTypingUsers());
+  socket.broadcast.emit("user-activity", users.getTypingUsers());
 }
 
 function sendInfoMessage(content: string) {
