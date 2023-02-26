@@ -60,18 +60,15 @@ io.on("connection", (socket) => {
     user: users.findUser(sessionId),
   });
 
-  socket.on("user-connect", (cb) => onUserConnect(socket, sessionId, cb));
+  socket.on("user-connect", (cb) => onUserConnect(socket, cb));
   socket.on("disconnect", () => onDisconnect(socket, sessionId));
   socket.on("user-disconnect", () => onUserDisconnect(sessionId));
   socket.on("message", (message) => addMessage(message));
+  socket.on("user-activity", (activity) => onUserActivity(socket, activity));
 });
 
-function onUserConnect(
-  socket: Socket,
-  sessionId: string,
-  callback: (data: Data) => void
-) {
-  const user = users.findUser(sessionId);
+function onUserConnect(socket: Socket, callback: (data: Data) => void) {
+  const user = users.findUser(socket.handshake.auth.sessionId);
   if (!user.online) {
     sendInfoMessage(`User ${user.name} joined the chat`);
     user.online = true;
@@ -90,6 +87,7 @@ async function onDisconnect(socket: Socket, sessionId: string) {
   if (matchingSockets.length === 0) {
     const user = users.findUser(sessionId);
     user.online = false;
+    users.removeTypingUser(user);
     sendInfoMessage(`User ${user.name} left the chat`);
     socket.broadcast.emit("user-disconnect", users.findAllUsers());
   }
@@ -100,6 +98,17 @@ async function getSessionSockets(sessionId: string) {
   return sockets.filter(
     (socket) => socket.handshake.auth.sessionId === sessionId
   );
+}
+
+function onUserActivity(socket: Socket, activity: string) {
+  const user = users.findUser(socket.handshake.auth.sessionId);
+  if (activity === "idle") {
+    users.removeTypingUser(user);
+  } else if (activity === "typing") {
+    users.addTypingUser(user);
+  }
+
+  io.emit("user-activity", users.getTypingUsers());
 }
 
 function sendInfoMessage(content: string) {

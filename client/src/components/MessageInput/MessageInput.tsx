@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { Socket } from "socket.io-client";
+import { SocketContext } from "../../App";
 import { Textarea } from "../Textarea";
 import css from "./MessageInput.module.css";
 
@@ -8,11 +10,35 @@ type Props = {
 
 export const MessageInput: React.FC<Props> = ({ sendMessage }) => {
   const [message, setMessage] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
+  const socket = useContext(SocketContext) as Socket;
+
+  useEffect(() => {
+    if (!message) {
+      setIsTyping(false);
+      return;
+    }
+
+    setIsTyping(true);
+
+    const timeout = setTimeout(() => {
+      setIsTyping(false);
+    }, 1000);
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [message]);
+
+  useEffect(() => {
+    socket.emit("user-activity", isTyping ? "typing" : "idle");
+  }, [isTyping, socket]);
 
   function sumbitMessage() {
-    if (!message.trim()) return;
+    const msg = message.trim();
+    if (!msg) return;
 
-    sendMessage(message.trim());
+    sendMessage(msg);
     setMessage("");
   }
 

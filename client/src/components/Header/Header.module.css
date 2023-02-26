@@ -14,6 +14,12 @@
   flex-grow: 1;
 }
 
+.header__buttons > div {
+  display: flex;
+  gap: 0.5em;
+  align-items: center;
+}
+
 .header__button {
   display: flex;
   border: none;

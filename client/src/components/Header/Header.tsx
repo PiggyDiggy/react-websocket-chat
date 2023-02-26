@@ -1,5 +1,6 @@
 import React from "react";
 import { cx } from "../../utils";
+import { ActivityBar } from "../ActivityBar";
 import css from "./Header.module.css";
 
 type Props = {
@@ -16,23 +17,26 @@ export const Header: React.FC<Props> = ({
   return (
     <header className={css.header}>
       <div className={css.header__buttons}>
-        <button
-          onClick={openSidebar}
-          className={css.header__button}
-          title="Show Users"
-        >
-          <svg
-            className={css.header__icon}
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
+        <div>
+          <button
+            onClick={openSidebar}
+            className={css.header__button}
+            title="Show Users"
           >
-            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-            <circle cx="9" cy="7" r="4"></circle>
-            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-          </svg>
-          <div className={css["users-count"]}>{usersCount}</div>
-        </button>
+            <svg
+              className={css.header__icon}
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+            >
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+            <div className={css["users-count"]}>{usersCount}</div>
+          </button>
+          <ActivityBar />
+        </div>
         <button
           className={cx(css.header__button, css["logout-button"])}
           onClick={logout}

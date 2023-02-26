@@ -1,0 +1,37 @@
+.activity {
+  font-size: 0.875rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.5em;
+  color: #575757;
+}
+
+.activity__icon {
+  display: flex;
+  gap: 0.25em;
+}
+
+.activity__icon-part {
+  width: 8px;
+  height: 8px;
+  border-radius: 100%;
+  background-color: #888;
+  animation: pulse 0.4s infinite alternate;
+}
+
+.activity__icon-part:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.activity__icon-part:last-child {
+  animation-delay: 0.2s;
+}
+
+@keyframes pulse {
+  0% {
+    background-color: #888;
+  }
+  100% {
+    background-color: #bbb;
+  }
+}
