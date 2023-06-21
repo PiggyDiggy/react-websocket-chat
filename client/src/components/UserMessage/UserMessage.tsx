@@ -30,12 +30,7 @@ export const UserMessage: React.FC<Props> = ({ message, pos, setReply }) => {
           <div className={css.message__container}>
             <div className={css.message__content}>
               <MessageInfo date={message.date!} author={message.author.name} />
-              {message.reply && (
-                <ReplyPreview
-                  message={message.reply}
-                  className={css.message__reply}
-                />
-              )}
+              {message.reply && <ReplyPreview message={message.reply} className={css.message__reply} />}
               <div>{message.content}</div>
             </div>
           </div>
@@ -45,10 +40,7 @@ export const UserMessage: React.FC<Props> = ({ message, pos, setReply }) => {
   }
 
   return (
-    <li
-      className={cx(css["message-wrapper"], { [css.self]: isOwn })}
-      onDoubleClick={() => setReply(message)}
-    >
+    <li className={cx(css["message-wrapper"], { [css.self]: isOwn })} onDoubleClick={() => setReply(message)}>
       <div className={css.message}>
         <div className={css.message__container}>
           {message.reply && <ReplyPreview message={message.reply} />}

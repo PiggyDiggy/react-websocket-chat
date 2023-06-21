@@ -29,6 +29,7 @@
 .input__label {
   position: absolute;
   pointer-events: none;
+  user-select: none;
   top: 50%;
   left: 50%;
   color: gray;
@@ -75,8 +76,10 @@
   transition: background-color 0.1s ease-out;
 }
 
-.button:hover {
+.button:hover,
+.button:focus {
   background-color: #815AFF;
+  outline-color: transparent;
 }
 
 .button__login-icon {

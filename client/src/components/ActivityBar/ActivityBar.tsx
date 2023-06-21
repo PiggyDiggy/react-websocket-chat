@@ -12,7 +12,6 @@ export const ActivityBar = () => {
   useEffect(() => {
     function formatActivity(usersList: User[]) {
       const list = usersList.filter((u) => u.id !== user.id);
-      console.log(list);
 
       if (list.length === 0) {
         return "";

@@ -46,8 +46,6 @@ export const Textarea: React.FC<Props> = ({
       focusTextarea();
     }
 
-    focusTextarea();
-
     document.addEventListener("keydown", handleKeyDown);
     document.addEventListener("paste", focusTextarea);
 

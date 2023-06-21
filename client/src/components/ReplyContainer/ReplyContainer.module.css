@@ -7,7 +7,6 @@
 }
 
 .reply-enter-active {
-  transition: height 0.2s ease;
   height: 4em;
 }
 
@@ -16,7 +15,6 @@
 }
 
 .reply-exit-active {
-  transition: height 0.2s ease;
   height: 0;
 }
 
@@ -38,6 +36,7 @@
   border: none;
   padding: 0;
   cursor: pointer;
+  background-color: white;
 }
 
 .reply__cross svg {
