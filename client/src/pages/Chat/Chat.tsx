@@ -1,10 +1,15 @@
 import React, { useEffect, useContext, useState } from "react";
-import { User, IMessage, ServerData, IUserMessage } from "../../types";
+import { useDispatch } from "react-redux";
+
+import { MessagesList } from "@/features/Messages";
+import { pushMessage, replaceMessages } from "@/features/Messages/messagesSlice";
+
+import { User, IMessage, ServerData } from "../../types";
 import { SocketContext } from "../../App";
-import { MessagesList } from "../../components/MessagesList";
 import { Composer } from "../../components/Composer";
 import { Sidebar } from "../../components/Sidebar";
 import { Header } from "../../components/Header";
+
 import css from "./Chat.module.css";
 
 type Props = {
@@ -14,27 +19,27 @@ type Props = {
 const ComposerMemo = React.memo(Composer);
 
 export const Chat: React.FC<Props> = ({ handleLogout }) => {
-  const [messages, setMessages] = useState<IMessage[]>([]);
+  const dispatch = useDispatch();
+
   const [users, setUsers] = useState<User[]>([]);
   const [sidebarOpened, setSidebarOpened] = useState(false);
-  const [reply, setReply] = useState<IUserMessage | null>(null);
-  const socket = useContext(SocketContext);  
+  const socket = useContext(SocketContext);
 
   useEffect(() => {
     if (!socket) return;
 
     socket.emit("user-connect", (data: ServerData) => {
-      setMessages(data.messages);
+      dispatch(replaceMessages(data.messages));
       setUsers(data.users);
     });
-    socket.on("message", (msg) => setMessages((list) => [...list, msg]));
+    socket.on("message", (msg: IMessage) => dispatch(pushMessage(msg)));
     socket.on("user-connect", (users) => setUsers(users));
     socket.on("user-disconnect", (users) => setUsers(users));
 
     return () => {
       socket.removeAllListeners();
     };
-  }, [socket]);
+  }, [socket, dispatch]);
 
   function getOnlineUsersCount() {
     return users.filter((user) => user.online).length;
@@ -42,20 +47,12 @@ export const Chat: React.FC<Props> = ({ handleLogout }) => {
 
   return (
     <>
-      <Header
-        logout={handleLogout}
-        openSidebar={() => setSidebarOpened(true)}
-        usersCount={getOnlineUsersCount()}
-      />
+      <Header logout={handleLogout} openSidebar={() => setSidebarOpened(true)} usersCount={getOnlineUsersCount()} />
       <main className={css.chat}>
-        <MessagesList setReply={setReply} messages={messages} />
-        <ComposerMemo reply={reply} setReply={setReply} />
+        <MessagesList />
+        <ComposerMemo />
       </main>
-      <Sidebar
-        users={users}
-        opened={sidebarOpened}
-        closeSidebar={() => setSidebarOpened(false)}
-      />
+      <Sidebar users={users} opened={sidebarOpened} closeSidebar={() => setSidebarOpened(false)} />
     </>
   );
 };

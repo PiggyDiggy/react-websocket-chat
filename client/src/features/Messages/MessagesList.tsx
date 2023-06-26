@@ -1,17 +1,17 @@
 import React, { useRef, useEffect } from "react";
-import { IMessage, IUserMessage, User } from "../../types";
-import { ServerMessage } from "../ServerMessage";
-import { UserMessage } from "../UserMessage";
-import css from "./MessagesList.module.css";
+import { useSelector } from "react-redux";
 
-type Props = {
-  messages: IMessage[];
-  setReply: (msg: IUserMessage) => void;
-};
+import { ServerMessage } from "@/components/ServerMessage";
+import { UserMessage } from "@/components/UserMessage";
+import type { RootState } from "@/store";
+import { IMessage, User } from "@/types";
+
+import css from "./MessagesList.module.css";
 
 const UserMsg = React.memo(UserMessage);
 
-export const MessagesList: React.FC<Props> = ({ messages, setReply }) => {
+export const MessagesList = () => {
+  const messages = useSelector((state: RootState) => state.messages.list);
   const listRef = useRef<HTMLUListElement>(null);
 
   useEffect(() => {
@@ -42,20 +42,6 @@ export const MessagesList: React.FC<Props> = ({ messages, setReply }) => {
     }
   }
 
-  useEffect(() => {
-    function handleClick(e: MouseEvent) {
-      if ((e.target as Element).parentElement === listRef.current && e.detail > 1) {
-        e.preventDefault();
-      }
-    }
-
-    document.addEventListener("mousedown", handleClick);
-
-    return () => {
-      document.removeEventListener("mousedown", handleClick);
-    };
-  }, []);
-
   function hasCommonAuthor(msg1: IMessage, msg2: IMessage) {
     return (msg1.author as User).id === (msg2.author as User).id;
   }
@@ -74,7 +60,7 @@ export const MessagesList: React.FC<Props> = ({ messages, setReply }) => {
         msg.author === "server" ? (
           <ServerMessage message={msg} key={msg.id} />
         ) : (
-          <UserMsg pos={getPos(msg, index)} message={msg} setReply={setReply} key={msg.id} />
+          <UserMsg pos={getPos(msg, index)} message={msg} key={msg.id} />
         )
       )}
     </ul>

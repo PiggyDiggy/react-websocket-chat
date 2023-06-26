@@ -1,6 +1,7 @@
 .message-wrapper {
   display: flex;
   width: 100%;
+  padding-top: 0.25em;
   --avatar-width: calc(40px + 0.5em);
   --border-radius-main: 14px;
   --border-radius-small: 5px;
@@ -13,7 +14,7 @@
 }
 
 .first-in-group {
-  margin-top: 0.25em;
+  padding-top: 0.5em;
 }
 
 .message {

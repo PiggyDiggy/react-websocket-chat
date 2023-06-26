@@ -1,23 +1,26 @@
-import React, { useContext } from "react";
-import { MessageInput } from "../../components/MessageInput";
-import { ReplyContainer } from "../../components/ReplyContainer";
-import { IMessage, IUserMessage } from "../../types";
-import { SocketContext, UserContext } from "../../App";
+import { useContext } from "react";
+import { useSelector, useDispatch } from "react-redux";
+
+import type { RootState } from "@/store";
+import { MessageInput } from "@/components/MessageInput";
+import { IUserMessage } from "@/types";
+import { SocketContext, UserContext } from "@/App";
+
+import { ReplyContainer } from "../../features/Reply";
+import { setReply } from "../../features/Reply/replySlice";
+
 import css from "./Composer.module.css";
 
-type Props = {
-  reply: IUserMessage | null;
-  setReply: (msg: IUserMessage | null) => void;
-};
-
-export const Composer: React.FC<Props> = ({ reply, setReply }) => {  
+export const Composer = () => {
+  const dispatch = useDispatch();
+  const reply = useSelector((state: RootState) => state.reply.message);
   const socket = useContext(SocketContext);
   const user = useContext(UserContext);
 
   function sendMessage(content: string) {
     if (!socket || !user) return;
 
-    const msg: IMessage = {
+    const msg: Omit<IUserMessage, "id"> = {
       type: "msg",
       author: user,
       content,
@@ -28,12 +31,12 @@ export const Composer: React.FC<Props> = ({ reply, setReply }) => {
     }
 
     socket.emit("message", msg);
-    setReply(null);
+    dispatch(setReply(null));
   }
 
   return (
     <div className={css.composer}>
-      <ReplyContainer message={reply} setReply={setReply} />
+      <ReplyContainer />
       <MessageInput sendMessage={sendMessage} />
     </div>
   );

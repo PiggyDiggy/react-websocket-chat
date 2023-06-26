@@ -1,7 +1,7 @@
 interface Message {
   content: string;
+  id: number;
   date?: string;
-  id?: number;
 }
 
 interface IUserMessage extends Message {
