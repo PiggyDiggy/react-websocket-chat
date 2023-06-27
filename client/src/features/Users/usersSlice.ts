@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
+import { revertAll } from "@/store";
 import type { User, UserId } from "@/types";
 
 export type UsersState = {
@@ -42,6 +43,7 @@ const initialState: UsersState = {
 const usersSlice = createSlice({
   name: "users",
   initialState,
+  extraReducers: (builder) => builder.addCase(revertAll, () => initialState),
   reducers: {
     setUsers: (state, { payload }: PayloadAction<User[]>) => {
       const collection = payload.reduce((acc, user) => {

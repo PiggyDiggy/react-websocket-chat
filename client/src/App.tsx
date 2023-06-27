@@ -1,8 +1,8 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useState, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { io, Socket } from "socket.io-client";
 
-import type { RootState } from "./store";
+import { revertAll, type RootState } from "./store";
 import { setUser } from "./store/selfSlice";
 import { Chat } from "./pages/Chat";
 import { Login } from "./pages/Login";
@@ -28,30 +28,23 @@ const App = () => {
     };
   }, [dispatch]);
 
-  useEffect(() => {
-    if (!socket) return;
+  const handleLogin = useCallback(
+    (username: string) => {
+      const socket = io(address, { auth: { username } });
+      socket.on("session", ({ user, sessionId }) => {
+        dispatch(setUser(user));
+        localStorage.setItem("chat-session-id", sessionId);
+      });
+      setSocket(socket);
+    },
+    [dispatch]
+  );
 
-    socket.on("disconnect", () => dispatch(setUser(null)));
-
-    return () => {
-      socket.off("disconnect");
-    };
-  }, [socket, dispatch]);
-
-  function handleLogin(username: string) {
-    const socket = io(address, { auth: { username } });
-    socket.on("session", ({ user, sessionId }) => {
-      dispatch(setUser(user));
-      localStorage.setItem("chat-session-id", sessionId);
-    });
-    setSocket(socket);
-  }
-
-  function handleLogout() {
+  const handleLogout = useCallback(() => {
     socket?.emit("user:disconnect");
     localStorage.removeItem("chat-session-id");
-    dispatch(setUser(null));
-  }
+    dispatch(revertAll());
+  }, [socket, dispatch]);
 
   return (
     <>
