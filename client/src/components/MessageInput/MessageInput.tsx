@@ -1,17 +1,25 @@
-import React, { useState, useEffect, useContext } from "react";
-import { Socket } from "socket.io-client";
-import { SocketContext } from "../../App";
+import { useState, useEffect, useContext } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import type { Socket } from "socket.io-client";
+
+import { SocketContext } from "@/App";
+import type { RootState } from "@/store";
+import { IUserMessage, User } from "@/types";
+import { setReply } from "@/features/Reply/replySlice";
+
 import { Textarea } from "../Textarea";
+
 import css from "./MessageInput.module.css";
 
-type Props = {
-  sendMessage: (content: string) => void;
-};
+export const MessageInput = () => {
+  const dispatch = useDispatch();
+  const reply = useSelector((state: RootState) => state.reply.message);
+  const user = useSelector((state: RootState) => state.self.user) as User;
 
-export const MessageInput: React.FC<Props> = ({ sendMessage }) => {
+  const socket = useContext(SocketContext) as Socket;
+
   const [message, setMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
-  const socket = useContext(SocketContext) as Socket;
 
   useEffect(() => {
     if (!message) {
@@ -35,10 +43,21 @@ export const MessageInput: React.FC<Props> = ({ sendMessage }) => {
   }, [isTyping, socket]);
 
   function sumbitMessage() {
-    const msg = message.trim();
-    if (!msg) return;
+    const content = message.trim();
+    if (!content) return;
 
-    sendMessage(msg);
+    const msg: Omit<IUserMessage, "id"> = {
+      type: "msg",
+      author: { id: user.id, name: user.name },
+      content,
+    };
+
+    if (reply) {
+      msg.reply = reply;
+      dispatch(setReply(null));
+    }
+
+    socket.emit("message", msg);
     setMessage("");
   }
 
@@ -53,12 +72,7 @@ export const MessageInput: React.FC<Props> = ({ sendMessage }) => {
           className={css["message-textarea"]}
         />
       </div>
-      <button
-        className={css["send-button"]}
-        onClick={sumbitMessage}
-        type="submit"
-        title="Send"
-      >
+      <button className={css["send-button"]} onClick={sumbitMessage} type="submit" title="Send">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="32"

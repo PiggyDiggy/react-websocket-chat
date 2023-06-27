@@ -8,7 +8,8 @@ import { IMessage, User } from "@/types";
 
 import css from "./MessagesList.module.css";
 
-const UserMsg = React.memo(UserMessage);
+const UserMessageMemo = React.memo(UserMessage);
+const ServerMessageMemo = React.memo(ServerMessage);
 
 export const MessagesList = () => {
   const messages = useSelector((state: RootState) => state.messages.list);
@@ -58,9 +59,9 @@ export const MessagesList = () => {
     <ul className={css["messages-list"]} ref={listRef}>
       {messages.map((msg, index) =>
         msg.author === "server" ? (
-          <ServerMessage message={msg} key={msg.id} />
+          <ServerMessageMemo message={msg} key={msg.id} />
         ) : (
-          <UserMsg pos={getPos(msg, index)} message={msg} key={msg.id} />
+          <UserMessageMemo pos={getPos(msg, index)} message={msg} key={msg.id} />
         )
       )}
     </ul>

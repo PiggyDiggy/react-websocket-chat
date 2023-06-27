@@ -73,7 +73,7 @@ function onUserConnect(socket: Socket, callback: (data: Data) => void) {
   const user = users.findUser(socket.handshake.auth.sessionId);
   if (!user.online) {
     user.online = true;
-    socket.broadcast.emit("user:connect", user);
+    socket.broadcast.emit("user:connect", user.id);
   }
   callback({ messages, users: users.findAllUsers() });
 }
@@ -82,7 +82,7 @@ async function onUserDisconnect(socket: Socket, sessionId: string) {
   const matchingSockets = await getSessionSockets(sessionId);
   matchingSockets.forEach((socket) => socket.disconnect());
   const user = users.findUser(sessionId);
-  socket.broadcast.emit("channel:member-leave", user);
+  socket.broadcast.emit("channel:member-leave", user.id);
   sendInfoMessage(`User ${user.name} left the chat`);
 }
 
@@ -92,7 +92,7 @@ async function onDisconnect(socket: Socket, sessionId: string) {
     const user = users.findUser(sessionId);
     user.online = false;
     users.removeTypingUser(user);
-    socket.broadcast.emit("user:disconnect", user);
+    socket.broadcast.emit("user:disconnect", user.id);
   }
 }
 

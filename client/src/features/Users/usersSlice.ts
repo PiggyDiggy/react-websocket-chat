@@ -1,11 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
-import type { User } from "@/types";
+import type { User, UserId } from "@/types";
 
 export type UsersState = {
-  ids: User["id"][];
-  collection: Record<User["id"], User>;
+  ids: UserId[];
+  collection: Record<UserId, User>;
 };
 
 function sortIds({ ids, collection }: UsersState) {
@@ -56,9 +56,9 @@ const usersSlice = createSlice({
       const index = findInsertIndex(state, payload);
       state.ids.splice(index, 0, payload.id);
     },
-    removeUser: (state, { payload }: PayloadAction<User>) => {
-      state.ids = state.ids.filter((id) => id !== payload.id);
-      delete state.collection[payload.id];
+    removeUser: (state, { payload }: PayloadAction<UserId>) => {
+      state.ids = state.ids.filter((id) => id !== payload);
+      delete state.collection[payload];
     },
     setUserOnlineStatus: (state, { payload }: PayloadAction<Pick<User, "id" | "online">>) => {
       const user = state.collection[payload.id];

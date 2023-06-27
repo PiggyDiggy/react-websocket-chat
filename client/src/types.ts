@@ -17,12 +17,14 @@ interface IServerMessage extends Message {
 
 type IMessage = IUserMessage | IServerMessage;
 
+type UserId = string;
+
 type User = {
+  id: UserId;
   name: string;
-  id: string;
   online: boolean;
 };
 
 type ServerData = { messages: IMessage[]; users: User[] };
 
-export type { IMessage, IUserMessage, IServerMessage, User, ServerData };
+export type { IMessage, IUserMessage, IServerMessage, User, ServerData, UserId };
