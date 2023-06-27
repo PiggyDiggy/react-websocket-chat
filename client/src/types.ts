@@ -6,7 +6,7 @@ interface Message {
 
 interface IUserMessage extends Message {
   type: "msg";
-  author: User;
+  author: Omit<User, "online">;
   reply?: IUserMessage;
 }
 

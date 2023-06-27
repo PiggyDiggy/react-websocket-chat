@@ -1,12 +1,16 @@
 import { useContext, useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
-import { SocketContext, UserContext } from "../../App";
-import { User } from "../../types";
+
+import type { RootState } from "@/store";
+import { SocketContext } from "@/App";
+import { User } from "@/types";
+
 import css from "./ActivityBar.module.css";
 
 export const ActivityBar = () => {
   const [activity, setActivity] = useState("");
-  const user = useContext(UserContext) as User;
+  const user = useSelector((state: RootState) => state.self.user) as User;
   const socket = useContext(SocketContext) as Socket;
 
   useEffect(() => {
@@ -27,7 +31,7 @@ export const ActivityBar = () => {
         .join(", ")} and ${list[list.length - 1].name} are typing`;
     }
 
-    socket.on("user-activity", (list) => {
+    socket.on("user:activity", (list) => {
       setActivity(formatActivity(list));
     });
   }, [socket, user]);

@@ -50,6 +50,7 @@ io.use((socket: Socket, next) => {
     online: false,
   };
   users.saveUser(socket.handshake.auth.sessionId, user);
+  socket.broadcast.emit("channel:new-member", user);
   sendInfoMessage(`User ${user.name} joined the chat`);
   next();
 });
@@ -57,30 +58,31 @@ io.use((socket: Socket, next) => {
 io.on("connection", (socket) => {
   const { sessionId } = socket.handshake.auth;
   socket.emit("session", {
-    sessionId: sessionId,
+    sessionId,
     user: users.findUser(sessionId),
   });
 
-  socket.on("user-connect", (cb) => onUserConnect(socket, cb));
+  socket.on("user:connect", (cb) => onUserConnect(socket, cb));
   socket.on("disconnect", () => onDisconnect(socket, sessionId));
-  socket.on("user-disconnect", () => onUserDisconnect(sessionId));
+  socket.on("user:disconnect", () => onUserDisconnect(socket, sessionId));
   socket.on("message", (message) => addMessage(message));
-  socket.on("user-activity", (activity) => onUserActivity(socket, activity));
+  socket.on("user:activity", (activity) => onUserActivity(socket, activity));
 });
 
 function onUserConnect(socket: Socket, callback: (data: Data) => void) {
   const user = users.findUser(socket.handshake.auth.sessionId);
   if (!user.online) {
     user.online = true;
-    socket.broadcast.emit("user-connect", users.findAllUsers());
+    socket.broadcast.emit("user:connect", user);
   }
   callback({ messages, users: users.findAllUsers() });
 }
 
-async function onUserDisconnect(sessionId: string) {
+async function onUserDisconnect(socket: Socket, sessionId: string) {
   const matchingSockets = await getSessionSockets(sessionId);
   matchingSockets.forEach((socket) => socket.disconnect());
   const user = users.findUser(sessionId);
+  socket.broadcast.emit("channel:member-leave", user);
   sendInfoMessage(`User ${user.name} left the chat`);
 }
 
@@ -90,15 +92,13 @@ async function onDisconnect(socket: Socket, sessionId: string) {
     const user = users.findUser(sessionId);
     user.online = false;
     users.removeTypingUser(user);
-    socket.broadcast.emit("user-disconnect", users.findAllUsers());
+    socket.broadcast.emit("user:disconnect", user);
   }
 }
 
 async function getSessionSockets(sessionId: string) {
   const sockets = await io.fetchSockets();
-  return sockets.filter(
-    (socket) => socket.handshake.auth.sessionId === sessionId
-  );
+  return sockets.filter((socket) => socket.handshake.auth.sessionId === sessionId);
 }
 
 function onUserActivity(socket: Socket, activity: string) {
@@ -109,7 +109,7 @@ function onUserActivity(socket: Socket, activity: string) {
     users.addTypingUser(user);
   }
 
-  socket.broadcast.emit("user-activity", users.getTypingUsers());
+  socket.broadcast.emit("user:activity", users.getTypingUsers());
 }
 
 function sendInfoMessage(content: string) {
@@ -130,7 +130,7 @@ function addMessage(message: Message) {
 function buildMessage(message: Message) {
   return {
     ...message,
-    date: new Date().toString(),
+    date: new Date().toJSON(),
     id: messages.length,
   };
 }

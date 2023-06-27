@@ -31,7 +31,7 @@ export const MessageInput: React.FC<Props> = ({ sendMessage }) => {
   }, [message]);
 
   useEffect(() => {
-    socket.emit("user-activity", isTyping ? "typing" : "idle");
+    socket.emit("user:activity", isTyping ? "typing" : "idle");
   }, [isTyping, socket]);
 
   function sumbitMessage() {

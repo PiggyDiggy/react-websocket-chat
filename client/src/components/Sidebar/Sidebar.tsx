@@ -1,16 +1,16 @@
 import React, { useRef } from "react";
 import { CSSTransition } from "react-transition-group";
-import { User } from "../../types";
-import { UserList } from "../UserList";
+
+import { UsersList } from "@/features/Users";
+
 import css from "./Sidebar.module.css";
 
 type Props = {
-  users: User[];
   opened: boolean;
   closeSidebar: () => void;
 };
 
-export const Sidebar: React.FC<Props> = ({ users, opened, closeSidebar }) => {
+export const Sidebar: React.FC<Props> = ({ opened, closeSidebar }) => {
   const sidebarRef = useRef<HTMLDivElement>(null);
 
   return (
@@ -29,7 +29,7 @@ export const Sidebar: React.FC<Props> = ({ users, opened, closeSidebar }) => {
     >
       <div className={css.wrapper}>
         <aside ref={sidebarRef} className={css.sidebar}>
-          <UserList users={users} />
+          <UsersList />
         </aside>
         <div onClick={closeSidebar} className={css.backdrop}></div>
       </div>

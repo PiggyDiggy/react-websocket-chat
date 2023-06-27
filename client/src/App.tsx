@@ -1,62 +1,63 @@
 import { createContext, useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { io, Socket } from "socket.io-client";
+
+import type { RootState } from "./store";
+import { setUser } from "./store/selfSlice";
 import { Chat } from "./pages/Chat";
 import { Login } from "./pages/Login";
-import { User } from "./types";
 
 const SocketContext = createContext<Socket | null>(null);
-const UserContext = createContext<User | null>(null);
 const address = process.env.NODE_ENV === "development" ? "//:8080" : "";
 
 const App = () => {
+  const dispatch = useDispatch();
+  const user = useSelector((state: RootState) => state.self.user);
   const [socket, setSocket] = useState<Socket | null>(null);
-  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     const sessionId = localStorage.getItem("chat-session-id");
     if (!sessionId) return;
 
     const socket = io(address, { auth: { sessionId } });
-    socket.on("session", ({ user }) => setUser(user));
+    socket.on("session", ({ user }) => dispatch(setUser(user)));
     setSocket(socket);
 
     return () => {
       socket.close();
     };
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     if (!socket) return;
 
-    socket.on("disconnect", () => setUser(null));
+    socket.on("disconnect", () => dispatch(setUser(null)));
 
     return () => {
       socket.off("disconnect");
     };
-  }, [socket]);
+  }, [socket, dispatch]);
 
   function handleLogin(username: string) {
     const socket = io(address, { auth: { username } });
     socket.on("session", ({ user, sessionId }) => {
-      setUser(user);
+      dispatch(setUser(user));
       localStorage.setItem("chat-session-id", sessionId);
     });
     setSocket(socket);
   }
 
   function handleLogout() {
-    socket?.emit("user-disconnect");
+    socket?.emit("user:disconnect");
     localStorage.removeItem("chat-session-id");
-    setUser(null);
+    dispatch(setUser(null));
   }
 
   return (
     <>
       {user ? (
         <SocketContext.Provider value={socket}>
-          <UserContext.Provider value={user}>
-            <Chat handleLogout={handleLogout} />
-          </UserContext.Provider>
+          <Chat handleLogout={handleLogout} />
         </SocketContext.Provider>
       ) : (
         <Login handleLogin={handleLogin} />
@@ -65,6 +66,6 @@ const App = () => {
   );
 };
 
-export { SocketContext, UserContext };
+export { SocketContext };
 
 export default App;

@@ -1,9 +1,9 @@
-import React, { useContext, useRef, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import React, { useRef, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 
+import type { RootState } from "@/store";
 import { setReply } from "@/features/Reply/replySlice";
 import { IUserMessage, User } from "@/types";
-import { UserContext } from "@/App";
 import { cx } from "@/utils";
 
 import { Avatar } from "../Avatar";
@@ -19,9 +19,9 @@ type Props = {
 
 export const UserMessage: React.FC<Props> = ({ message, pos }) => {
   const dispatch = useDispatch();
+  const user = useSelector((state: RootState) => state.self.user) as User;
   const messageRef = useRef<HTMLLIElement>(null);
 
-  const user = useContext(UserContext) as User;
   const isOwn = message.author.id === user.id;
 
   useEffect(() => {

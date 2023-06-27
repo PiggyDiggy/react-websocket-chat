@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "@/store";
 import { MessageInput } from "@/components/MessageInput";
 import { IUserMessage } from "@/types";
-import { SocketContext, UserContext } from "@/App";
+import { SocketContext } from "@/App";
 
 import { ReplyContainer } from "../../features/Reply";
 import { setReply } from "../../features/Reply/replySlice";
@@ -14,15 +14,15 @@ import css from "./Composer.module.css";
 export const Composer = () => {
   const dispatch = useDispatch();
   const reply = useSelector((state: RootState) => state.reply.message);
+  const user = useSelector((state: RootState) => state.self.user);
   const socket = useContext(SocketContext);
-  const user = useContext(UserContext);
 
   function sendMessage(content: string) {
     if (!socket || !user) return;
 
     const msg: Omit<IUserMessage, "id"> = {
       type: "msg",
-      author: user,
+      author: { id: user.id, name: user.name },
       content,
     };
 
