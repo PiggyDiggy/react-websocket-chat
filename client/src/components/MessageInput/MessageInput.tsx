@@ -7,6 +7,7 @@ import type { RootState } from "@/store";
 import { IUserMessage, User } from "@/types";
 import { setReply } from "@/features/Reply/replySlice";
 
+import { SendIcon } from "../Icons/SendIcon";
 import { Textarea } from "../Textarea";
 
 import css from "./MessageInput.module.css";
@@ -73,20 +74,7 @@ export const MessageInput = () => {
         />
       </div>
       <button className={css["send-button"]} onClick={sumbitMessage} type="submit" title="Send">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="32"
-          height="32"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="#575757"
-          strokeWidth="1"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <line x1="22" y1="2" x2="11" y2="13"></line>
-          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-        </svg>
+        <SendIcon />
       </button>
     </form>
   );

@@ -53,14 +53,11 @@
   border-top-left-radius: 0;
 }
 
-.first-in-group .message__container::before {
-  content: "";
+.first-in-group .message__corner {
   position: absolute;
+  display: block;
   top: 0;
   left: -9px;
-  width: 9px;
-  height: 17px;
-  background: url(../../assets/message-corner.svg);
   transform: scaleY(-1);
   z-index: -1;
 }
@@ -78,7 +75,7 @@
   border-top-right-radius: 0;
 }
 
-.self .message__container::before {
+.self .message__corner {
   left: unset;
   right: -9px;
   transform: scale(-1);

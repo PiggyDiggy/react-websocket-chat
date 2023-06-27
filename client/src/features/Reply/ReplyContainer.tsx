@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "@/store";
 import { usePrevious } from "@/hooks/usePrevious";
 import { IUserMessage } from "@/types";
+import { CrossIcon } from "@/components/Icons/CrossIcon";
 import { ReplyPreview } from "@/components/ReplyPreview";
 
 import { setReply } from "./replySlice";
@@ -34,10 +35,7 @@ export const ReplyContainer = () => {
         <div className={css["reply-wrapper"]}>
           <ReplyPreview className={css.reply} message={(reply || prevReply) as IUserMessage} />
           <button className={css.reply__cross} onClick={() => dispatch(setReply(null))}>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-              <line x1="10" x2="90" y1="90" y2="10" />
-              <line x1="10" x2="90" y1="10" y2="90" />
-            </svg>
+            <CrossIcon />
           </button>
         </div>
       </div>

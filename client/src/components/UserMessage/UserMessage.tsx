@@ -6,6 +6,7 @@ import { setReply } from "@/features/Reply/replySlice";
 import { IUserMessage, User } from "@/types";
 import { cx } from "@/utils";
 
+import { MessageCorner } from "../Icons/MessageCorner";
 import { Avatar } from "../Avatar";
 import { ReplyPreview } from "../ReplyPreview";
 import { MessageInfo } from "../MessageInfo";
@@ -52,6 +53,7 @@ export const UserMessage: React.FC<Props> = ({ message, pos }) => {
         <div className={css.message}>
           <Avatar name={message.author.name} />
           <div className={css.message__container}>
+            <MessageCorner className={css.message__corner} />
             <div className={css.message__content}>
               <MessageInfo date={message.date!} author={message.author.name} />
               {message.reply && <ReplyPreview message={message.reply} className={css.message__reply} />}
