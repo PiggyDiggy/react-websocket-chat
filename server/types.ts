@@ -1,18 +1,51 @@
-interface Message {
-  type: "info" | "msg";
+interface MessageBase {
   content: string;
-  author: "server" | User;
-  reply?: Message;
+  id: number;
   date?: string;
-  id?: number;
 }
 
-interface User {
+export interface UserMessage extends MessageBase {
+  type: "msg";
+  author: Omit<User, "online">;
+  reply?: UserMessage;
+}
+
+export interface ServerMessage extends MessageBase {
+  type: "info";
+  author: "server";
+}
+
+export type Message = UserMessage | ServerMessage;
+
+export type UserId = string;
+
+export interface User {
   name: string;
-  id: string;
+  id: UserId;
   online: boolean;
 }
 
-type Data = { messages: Message[]; users: User[] };
+export type ChannelData = { messages: Message[]; users: User[] };
 
-export type { Message, User, Data };
+interface SessionData {
+  sessionId: string;
+  user: User;
+}
+
+export interface ServerToClientEvents {
+  "channel:new-member": (user: User) => void;
+  "channel:member-leave": (userId: UserId) => void;
+  "user:activity": (users: User[]) => void;
+  "user:connect": (userId: UserId) => void;
+  "user:disconnect": (userId: UserId) => void;
+  session: (data: SessionData) => void;
+  message: (message: Message) => void;
+}
+
+export interface ClientToServerEvents {
+  "user:activity": (activity: string) => void;
+  "user:join-channel": (username: string) => void;
+  "user:leave-channel": () => void;
+  "channel:get-data": (cb: (data: ChannelData) => void) => void;
+  message: (message: Message) => void;
+}

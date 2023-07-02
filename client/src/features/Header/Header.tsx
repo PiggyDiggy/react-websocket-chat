@@ -1,6 +1,8 @@
-import React from "react";
-import { useSelector } from "react-redux";
+import React, {useContext} from "react";
+import { useSelector, useDispatch } from "react-redux";
 
+import { revertAll } from "@/store";
+import { SocketContext } from "@/App";
 import { LogoutIcon } from "@/components/Icons/LogoutIcon";
 import { UsersIcon } from "@/components/Icons/UsersIcon";
 import { ActivityBar } from "@/components/ActivityBar";
@@ -11,12 +13,19 @@ import { selectActiveUsersCount } from "./selectors";
 import css from "./Header.module.css";
 
 type Props = {
-  logout: () => void;
   openSidebar: () => void;
 };
 
-export const Header: React.FC<Props> = ({ logout, openSidebar }) => {
+export const Header: React.FC<Props> = ({ openSidebar }) => {
+  const dispatch = useDispatch();
   const activeUsersCount = useSelector(selectActiveUsersCount);
+  const socket = useContext(SocketContext);
+
+  const handleLogout = () => {
+    socket?.emit("user:leave-channel");
+    localStorage.removeItem("chat-session-id");
+    dispatch(revertAll());
+  }
 
   return (
     <header className={css.header}>
@@ -28,7 +37,7 @@ export const Header: React.FC<Props> = ({ logout, openSidebar }) => {
           </button>
           <ActivityBar />
         </div>
-        <button className={cx(css.header__button, css["logout-button"])} onClick={logout} title="Logout">
+        <button className={cx(css.header__button, css["logout-button"])} onClick={handleLogout} title="Logout">
           <LogoutIcon className={css.header__icon} arrowClassName={css["logout-icon__arrow"]} />
         </button>
       </div>

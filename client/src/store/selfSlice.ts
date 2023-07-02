@@ -12,7 +12,7 @@ export type UserState = {
 const initialState: UserState = { user: null };
 
 const userSlice = createSlice({
-  name: "user",
+  name: "self",
   initialState,
   extraReducers: (builder) => builder.addCase(revertAll, () => initialState),
   reducers: {

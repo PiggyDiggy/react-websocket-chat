@@ -5,20 +5,15 @@ import { Header } from "@/features/Header";
 import { MessagesList } from "@/features/Messages";
 import { pushMessage, replaceMessages } from "@/features/Messages/messagesSlice";
 import { setUsers, removeUser, addUser, setUserOnlineStatus } from "@/features/Users/usersSlice";
-import { IMessage, ServerData } from "@/types";
 import { SocketContext } from "@/App";
 import { Composer } from "@/components/Composer";
 import { Sidebar } from "@/components/Sidebar";
 
 import css from "./Chat.module.css";
 
-type Props = {
-  handleLogout: () => void;
-};
-
 const ComposerMemo = React.memo(Composer);
 
-export const Chat: React.FC<Props> = ({ handleLogout }) => {
+export const Chat = () => {
   const dispatch = useDispatch();
   const [sidebarOpened, setSidebarOpened] = useState(false);
   const socket = useContext(SocketContext);
@@ -34,11 +29,11 @@ export const Chat: React.FC<Props> = ({ handleLogout }) => {
   useEffect(() => {
     if (!socket) return;
 
-    socket.emit("user:connect", (data: ServerData) => {
+    socket.emit("channel:get-data", (data) => {
       dispatch(replaceMessages(data.messages));
       dispatch(setUsers(data.users));
     });
-    socket.on("message", (msg: IMessage) => dispatch(pushMessage(msg)));
+    socket.on("message", (msg) => dispatch(pushMessage(msg)));
 
     socket.on("channel:new-member", (user) => dispatch(addUser(user)));
     socket.on("channel:member-leave", (id) => dispatch(removeUser(id)));
@@ -53,7 +48,7 @@ export const Chat: React.FC<Props> = ({ handleLogout }) => {
 
   return (
     <>
-      <Header logout={handleLogout} openSidebar={openSidebar} />
+      <Header openSidebar={openSidebar} />
       <main className={css.chat}>
         <MessagesList />
         <ComposerMemo />

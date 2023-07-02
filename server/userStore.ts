@@ -17,6 +17,10 @@ export class UserStore {
     this.users[sessionId] = user;
   }
 
+  removeUser(sessionId: string) {
+    delete this.users[sessionId];
+  }
+
   findAllUsers() {
     return Object.values(this.users);
   }

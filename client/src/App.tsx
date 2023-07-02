@@ -1,61 +1,60 @@
-import { createContext, useEffect, useState, useCallback } from "react";
+import { createContext, useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { io, Socket } from "socket.io-client";
 
+import type { ClientToServerEvents, ServerToClientEvents } from "../../server/types";
+import { Preloader } from "./components/Preloader";
 import { revertAll, type RootState } from "./store";
 import { setUser } from "./store/selfSlice";
 import { Chat } from "./pages/Chat";
 import { Login } from "./pages/Login";
 
-const SocketContext = createContext<Socket | null>(null);
+type SocketWithEvents = Socket<ServerToClientEvents, ClientToServerEvents>;
+
+const SocketContext = createContext<SocketWithEvents | null>(null);
 const address = process.env.NODE_ENV === "development" ? "//:8080" : "";
 
 const App = () => {
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.self.user);
-  const [socket, setSocket] = useState<Socket | null>(null);
+  const [connected, setConnected] = useState(false);
+  const [socket, setSocket] = useState<SocketWithEvents | null>(null);
 
   useEffect(() => {
     const sessionId = localStorage.getItem("chat-session-id");
-    if (!sessionId) return;
+    const socket: SocketWithEvents = io(address, { auth: { sessionId } });
 
-    const socket = io(address, { auth: { sessionId } });
-    socket.on("session", ({ user }) => dispatch(setUser(user)));
     setSocket(socket);
+
+    socket.on("connect", () => {
+      setConnected(true);
+    });
 
     return () => {
       socket.close();
     };
-  }, [dispatch]);
+  }, []);
 
-  const handleLogin = useCallback(
-    (username: string) => {
-      const socket = io(address, { auth: { username } });
-      socket.on("session", ({ user, sessionId }) => {
-        dispatch(setUser(user));
-        localStorage.setItem("chat-session-id", sessionId);
-      });
-      setSocket(socket);
-    },
-    [dispatch]
-  );
+  useEffect(() => {
+    if (!socket) return;
 
-  const handleLogout = useCallback(() => {
-    socket?.emit("user:disconnect");
-    localStorage.removeItem("chat-session-id");
-    dispatch(revertAll());
-  }, [socket, dispatch]);
+    socket.on("session", ({ sessionId, user }) => {
+      dispatch(setUser(user));
+      localStorage.setItem("chat-session-id", sessionId);
+    });
+    socket.on("channel:member-leave", (userId) => {
+      if (userId === user?.id) {
+        dispatch(revertAll());
+      }
+    });
+  }, [dispatch, socket, user?.id]);
 
   return (
-    <>
-      {user ? (
-        <SocketContext.Provider value={socket}>
-          <Chat handleLogout={handleLogout} />
-        </SocketContext.Provider>
-      ) : (
-        <Login handleLogin={handleLogin} />
-      )}
-    </>
+    <SocketContext.Provider value={socket}>
+      <Preloader loading={!connected}>
+        {user ? <Chat /> : <Login />}
+      </Preloader>
+    </SocketContext.Provider>
   );
 };
 

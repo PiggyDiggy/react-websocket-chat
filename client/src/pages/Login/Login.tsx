@@ -1,15 +1,13 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef, useContext } from "react";
 
+import { SocketContext } from "@/App";
 import { LoginIcon } from "@/components/Icons/LoginIcon";
 
 import css from "./Login.module.css";
 
-type Props = {
-  handleLogin: (name: string) => void;
-};
-
-export const Login: React.FC<Props> = ({ handleLogin }) => {
+export const Login = () => {
   const input = useRef<HTMLInputElement>(null);
+  const socket = useContext(SocketContext);
 
   useEffect(() => {
     input.current?.focus();
@@ -19,7 +17,7 @@ export const Login: React.FC<Props> = ({ handleLogin }) => {
     const nickname = input.current?.value;
     if (!nickname) return;
 
-    handleLogin(nickname);
+    socket?.emit("user:join-channel", nickname);
   }
 
   function resize() {
