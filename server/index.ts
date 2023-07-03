@@ -31,7 +31,7 @@ const users = new UserStore();
 io.use((socket: Socket, next) => {
   const sessionId = socket.handshake.auth.sessionId;
   if (sessionId) {
-    const user = users.findUser(sessionId);
+    const user = users.getUserBySessionId(sessionId);
     if (user) {
       setUserOnline(socket, user);
       loginUser(socket, user);
@@ -68,7 +68,7 @@ function createUser(socket: Socket, username: string) {
 }
 
 function joinChannel(socket: Socket, username: string) {
-  if (users.findUser(socket.handshake.auth.sessionId)) return;
+  if (users.getUserBySessionId(socket.handshake.auth.sessionId)) return;
 
   const user = createUser(socket, username);
   loginUser(socket, user);
@@ -98,7 +98,7 @@ function sendChannelInfo(cb: (data: ChannelData) => void) {
 
 async function leaveChannel(socket: Socket) {
   const { sessionId } = socket.handshake.auth;
-  const user = users.findUser(sessionId);
+  const user = users.getUserBySessionId(sessionId);
 
   io.emit("channel:member-leave", user.id);
   users.removeUser(sessionId);
@@ -111,7 +111,7 @@ async function onDisconnect(socket: Socket) {
 
   const matchingSockets = await getSessionSockets(sessionId);
   if (matchingSockets.length === 0) {
-    const user = users.findUser(sessionId);
+    const user = users.getUserBySessionId(sessionId);
     if (!user) return;
     user.online = false;
     users.removeTypingUser(user);
@@ -125,7 +125,7 @@ async function getSessionSockets(sessionId: string) {
 }
 
 function onUserActivity(socket: Socket, activity: string) {
-  const user = users.findUser(socket.handshake.auth.sessionId);
+  const user = users.getUserBySessionId(socket.handshake.auth.sessionId);
   if (activity === "idle") {
     users.removeTypingUser(user);
   } else if (activity === "typing") {

@@ -1,28 +1,40 @@
-import { User } from "./types";
+import { User, UserId } from "./types";
 
 export class UserStore {
-  users: Record<string, User>;
+  users: Map<UserId, User>;
+  sessionIdToUserId: Map<string, UserId>;
   typingUsers: Set<User>;
 
   constructor() {
-    this.users = {};
+    this.users = new Map();
+    this.sessionIdToUserId = new Map();
     this.typingUsers = new Set();
   }
 
-  findUser(sessionId: string): User | undefined {
-    return this.users[sessionId];
+  getUserId(sessionId: string): UserId | undefined {
+    return this.sessionIdToUserId.get(sessionId);
+  }
+
+  getUser(userId: UserId): User | undefined {
+    return this.users.get(userId);
+  }
+
+  getUserBySessionId(sessionId: string) {
+    return this.getUser(this.getUserId(sessionId));
   }
 
   saveUser(sessionId: string, user: User) {
-    this.users[sessionId] = user;
+    this.users.set(user.id, user);
+    this.sessionIdToUserId.set(sessionId, user.id);
   }
 
   removeUser(sessionId: string) {
-    delete this.users[sessionId];
+    this.users.delete(this.getUserId(sessionId));
+    this.sessionIdToUserId.delete(sessionId);
   }
 
   findAllUsers() {
-    return Object.values(this.users);
+    return Array.from(this.users.values());
   }
 
   addTypingUser(user: User) {
