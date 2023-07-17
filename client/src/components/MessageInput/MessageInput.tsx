@@ -1,8 +1,8 @@
 import { useState, useEffect, useContext } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import type { Socket } from "socket.io-client";
 
-import { SocketContext } from "@/App";
+import type { SocketWithEvents } from "@/hooks/useSocketState";
+import { SocketContext } from "@/pages/Chat";
 import type { RootState } from "@/store";
 import { IUserMessage, User } from "@/types";
 import { setReply } from "@/features/Reply/replySlice";
@@ -17,7 +17,7 @@ export const MessageInput = () => {
   const reply = useSelector((state: RootState) => state.reply.message);
   const user = useSelector((state: RootState) => state.self.user) as User;
 
-  const socket = useContext(SocketContext) as Socket;
+  const socket = useContext(SocketContext) as SocketWithEvents;
 
   const [message, setMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);

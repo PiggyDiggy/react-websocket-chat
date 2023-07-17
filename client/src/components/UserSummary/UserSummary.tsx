@@ -1,7 +1,9 @@
 import React, { useContext } from "react";
-import { SocketContext } from "../../App";
-import { User } from "../../types";
-import { cx } from "../../utils";
+import { SocketContext } from "@/pages/Chat";
+
+import { User } from "@/types";
+import { cx } from "@/utils";
+
 import { Avatar } from "../Avatar";
 import css from "./UserSummary.module.css";
 
@@ -18,9 +20,7 @@ export const UserSummary: React.FC<Props> = ({ user }) => {
         <div className={css.user__name}>
           {user.name} {user.id === socket?.id && "(you)"}
         </div>
-        <small className={css.user__status}>
-          {user.online ? "online" : "offline"}
-        </small>
+        <small className={css.user__status}>{user.online ? "online" : "offline"}</small>
       </div>
     </li>
   );

@@ -1,23 +1,24 @@
-import { useEffect, useRef, useContext } from "react";
+import { useEffect, useRef } from "react";
+import { useDispatch } from "react-redux";
 
-import { SocketContext } from "@/App";
+import { createUser } from "@/store/selfSlice";
 import { LoginIcon } from "@/components/Icons/LoginIcon";
 
 import css from "./Login.module.css";
 
 export const Login = () => {
+  const dispatch = useDispatch();
   const input = useRef<HTMLInputElement>(null);
-  const socket = useContext(SocketContext);
 
   useEffect(() => {
     input.current?.focus();
   }, []);
 
   function login() {
-    const nickname = input.current?.value;
-    if (!nickname) return;
+    const username = input.current?.value;
+    if (!username) return;
 
-    socket?.emit("user:join-channel", nickname);
+    dispatch(createUser(username));
   }
 
   function resize() {

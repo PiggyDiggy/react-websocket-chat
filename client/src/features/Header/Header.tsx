@@ -1,8 +1,8 @@
-import React, {useContext} from "react";
+import React, { useContext } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 import { revertAll } from "@/store";
-import { SocketContext } from "@/App";
+import { SocketContext } from "@/pages/Chat";
 import { LogoutIcon } from "@/components/Icons/LogoutIcon";
 import { UsersIcon } from "@/components/Icons/UsersIcon";
 import { ActivityBar } from "@/components/ActivityBar";
@@ -25,7 +25,7 @@ export const Header: React.FC<Props> = ({ openSidebar }) => {
     socket?.emit("user:leave-channel");
     localStorage.removeItem("chat-session-id");
     dispatch(revertAll());
-  }
+  };
 
   return (
     <header className={css.header}>

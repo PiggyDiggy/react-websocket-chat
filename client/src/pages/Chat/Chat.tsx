@@ -1,22 +1,18 @@
-import React, { useEffect, useContext, useState, useCallback } from "react";
-import { useDispatch } from "react-redux";
+import { useState, useCallback, createContext } from "react";
 
 import { Header } from "@/features/Header";
 import { MessagesList } from "@/features/Messages";
-import { pushMessage, replaceMessages } from "@/features/Messages/messagesSlice";
-import { setUsers, removeUser, addUser, setUserOnlineStatus } from "@/features/Users/usersSlice";
-import { SocketContext } from "@/App";
+import { useSocketState, type SocketWithEvents } from "@/hooks/useSocketState";
 import { Composer } from "@/components/Composer";
 import { Sidebar } from "@/components/Sidebar";
 
 import css from "./Chat.module.css";
 
-const ComposerMemo = React.memo(Composer);
+const SocketContext = createContext<SocketWithEvents | null>(null);
 
 export const Chat = () => {
-  const dispatch = useDispatch();
   const [sidebarOpened, setSidebarOpened] = useState(false);
-  const socket = useContext(SocketContext);
+  const socket = useSocketState();
 
   const openSidebar = useCallback(() => {
     setSidebarOpened(true);
@@ -26,34 +22,16 @@ export const Chat = () => {
     setSidebarOpened(false);
   }, []);
 
-  useEffect(() => {
-    if (!socket) return;
-
-    socket.emit("channel:get-data", (data) => {
-      dispatch(replaceMessages(data.messages));
-      dispatch(setUsers(data.users));
-    });
-    socket.on("message", (msg) => dispatch(pushMessage(msg)));
-
-    socket.on("channel:new-member", (user) => dispatch(addUser(user)));
-    socket.on("channel:member-leave", (id) => dispatch(removeUser(id)));
-
-    socket.on("user:connect", (id) => dispatch(setUserOnlineStatus({ id, online: true })));
-    socket.on("user:disconnect", (id) => dispatch(setUserOnlineStatus({ id, online: false })));
-
-    return () => {
-      socket.removeAllListeners();
-    };
-  }, [socket, dispatch]);
-
   return (
-    <>
+    <SocketContext.Provider value={socket}>
       <Header openSidebar={openSidebar} />
       <main className={css.chat}>
         <MessagesList />
-        <ComposerMemo />
+        <Composer />
       </main>
       <Sidebar opened={sidebarOpened} closeSidebar={closeSidebar} />
-    </>
+    </SocketContext.Provider>
   );
 };
+
+export { SocketContext };

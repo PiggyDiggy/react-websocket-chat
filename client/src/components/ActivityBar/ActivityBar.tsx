@@ -1,9 +1,8 @@
 import { useContext, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Socket } from "socket.io-client";
 
 import type { RootState } from "@/store";
-import { SocketContext } from "@/App";
+import { SocketContext } from "@/pages/Chat";
 import { User } from "@/types";
 
 import css from "./ActivityBar.module.css";
@@ -11,9 +10,11 @@ import css from "./ActivityBar.module.css";
 export const ActivityBar = () => {
   const [activity, setActivity] = useState("");
   const user = useSelector((state: RootState) => state.self.user) as User;
-  const socket = useContext(SocketContext) as Socket;
+  const socket = useContext(SocketContext);
 
   useEffect(() => {
+    if (!socket) return;
+
     function formatActivity(usersList: User[]) {
       const list = usersList.filter((u) => u.id !== user.id);
 

@@ -25,27 +25,17 @@ export interface User {
   online: boolean;
 }
 
-export type ChannelData = { messages: Message[]; users: User[] };
-
-interface SessionData {
-  sessionId: string;
-  user: User;
-}
-
 export interface ServerToClientEvents {
   "channel:new-member": (user: User) => void;
   "channel:member-leave": (userId: UserId) => void;
   "user:activity": (users: User[]) => void;
   "user:connect": (userId: UserId) => void;
   "user:disconnect": (userId: UserId) => void;
-  session: (data: SessionData) => void;
   message: (message: Message) => void;
 }
 
 export interface ClientToServerEvents {
   "user:activity": (activity: string) => void;
-  "user:join-channel": (username: string) => void;
   "user:leave-channel": () => void;
-  "channel:get-data": (cb: (data: ChannelData) => void) => void;
-  message: (message: Message) => void;
+  message: (message: Omit<UserMessage, "id">) => void;
 }

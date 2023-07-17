@@ -12,7 +12,7 @@ const initialState: ReplyState = {
   message: null,
 };
 
-const replySlice = createSlice({
+export const replySlice = createSlice({
   name: "reply",
   initialState,
   extraReducers: (builder) => builder.addCase(revertAll, () => initialState),
@@ -24,5 +24,3 @@ const replySlice = createSlice({
 });
 
 export const { setReply } = replySlice.actions;
-
-export default replySlice.reducer;

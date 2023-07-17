@@ -1,15 +1,21 @@
+import { Epic, ofType } from "redux-observable";
+import { catchError, from, of } from "rxjs";
+import { mergeMap } from "rxjs/operators";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
-import { revertAll } from "@/store";
+import { getChannelMembers } from "@/api";
+import { revertAll, type Actions } from "@/store";
 import type { User, UserId } from "@/types";
 
 export type UsersState = {
   ids: UserId[];
   collection: Record<UserId, User>;
+  loading: boolean;
+  error: string;
 };
 
-function sortIds({ ids, collection }: UsersState) {
+function sortIds({ ids, collection }: Pick<UsersState, "collection" | "ids">) {
   return [...ids].sort((a, b) => {
     const userA = collection[a];
     const userB = collection[b];
@@ -19,7 +25,7 @@ function sortIds({ ids, collection }: UsersState) {
   });
 }
 
-function findInsertIndex({ ids, collection }: UsersState, newUser: User) {
+function findInsertIndex({ ids, collection }: Pick<UsersState, "collection" | "ids">, newUser: User) {
   for (let i = 0; i < ids.length; i++) {
     const user = collection[ids[i]];
     if (!user.online && newUser.online) {
@@ -38,20 +44,31 @@ function findInsertIndex({ ids, collection }: UsersState, newUser: User) {
 const initialState: UsersState = {
   ids: [],
   collection: {},
+  loading: false,
+  error: "",
 };
 
-const usersSlice = createSlice({
+export const usersSlice = createSlice({
   name: "users",
   initialState,
   extraReducers: (builder) => builder.addCase(revertAll, () => initialState),
   reducers: {
-    setUsers: (state, { payload }: PayloadAction<User[]>) => {
+    loadUsers: (state) => {
+      state.loading = true;
+      state.error = "";
+    },
+    loadUsersSuccess: (state, { payload }: PayloadAction<User[]>) => {
       const collection = payload.reduce((acc, user) => {
         acc[user.id] = user;
         return acc;
       }, {} as UsersState["collection"]);
       state.collection = collection;
       state.ids = sortIds({ ids: payload.map((user) => user.id), collection });
+      state.loading = false;
+    },
+    loadUsersFail: (state, { payload }: PayloadAction<string>) => {
+      state.loading = false;
+      state.error = payload;
     },
     addUser: (state, { payload }: PayloadAction<User>) => {
       state.collection[payload.id] = payload;
@@ -71,6 +88,14 @@ const usersSlice = createSlice({
   },
 });
 
-export const { setUsers, addUser, removeUser, setUserOnlineStatus } = usersSlice.actions;
+export const { loadUsers, loadUsersFail, loadUsersSuccess, addUser, removeUser, setUserOnlineStatus } =
+  usersSlice.actions;
 
-export default usersSlice.reducer;
+export const usersEpic: Epic<Actions> = (action$) =>
+  action$.pipe(
+    ofType(loadUsers.type),
+    mergeMap(() => {
+      return from(getChannelMembers()).pipe(mergeMap((users) => of(loadUsersSuccess(users))));
+    }),
+    catchError(() => of(loadUsersFail("Failed to load users")))
+  );
