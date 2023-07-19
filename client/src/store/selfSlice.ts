@@ -64,10 +64,10 @@ const loadUserEpic: Epic<Actions> = (action$) =>
         return EMPTY;
       }
       return from(getUserBySessionId(payload)).pipe(
-        mergeMap((user) => of(loadUserSuccess(user), loadMessages(), loadUsers()))
+        mergeMap((user) => of(loadUserSuccess(user), loadMessages(), loadUsers())),
+        catchError(() => of(loadUserFail("Failed to load user")))
       );
-    }),
-    catchError(() => of(loadUserFail("Failed to load user")))
+    })
   );
 
 const createUserEpic: Epic<Actions> = (action$) =>
