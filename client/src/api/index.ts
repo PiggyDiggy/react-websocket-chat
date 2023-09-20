@@ -1,6 +1,6 @@
 import type { User, IMessage } from "@/types";
 
-const BASE_URL = "http://localhost:8080/api";
+const BASE_URL = `http://${window.location.host}/api`;
 
 async function request(pathname: string, options?: RequestInit) {
   const response = await fetch(`${BASE_URL}/${pathname}`, options);

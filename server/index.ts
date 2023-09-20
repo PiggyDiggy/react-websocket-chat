@@ -90,7 +90,6 @@ function createUser(username: string) {
 }
 
 function joinChannel(user: User) {
-  if (users.getUser(user.id)) return;
   io.emit("channel:new-member", user);
   sendInfoMessage(`User ${user.name} joined the chat`);
 }
